@@ -4,7 +4,7 @@ import { DbAddAccount } from './db-add-account'
 const makeEncrypter = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt (value: string): Promise<string> {
-      return new Promise(resolve => resolve('hash_password'))
+      return new Promise(resolve => resolve('hashed_password'))
     }
   }
   return new EncrypterStub()
@@ -17,7 +17,7 @@ const makeAddAccountRepository = (): AddAccountRepository => {
         id: 'valid_id',
         name: 'valid_name',
         email: 'valid_email',
-        password: 'hash_password'
+        password: 'hashed_password'
       }
       return new Promise(resolve => resolve(fakeAccount))
     }
@@ -80,7 +80,7 @@ describe('DbAddAccount Usecase', () => {
     expect(addSpy).toHaveBeenCalledWith({
       name: 'valid_name',
       email: 'valid_email',
-      password: 'hash_password'
+      password: 'hashed_password'
     })
   })
 
@@ -94,5 +94,23 @@ describe('DbAddAccount Usecase', () => {
     }
     const promise = sut.add(accountData)
     await expect(promise).rejects.toThrow()
+  })
+
+  test('should return an account on success', async () => {
+    const { sut } = makeSut()
+
+    const accountData = {
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'valid_password'
+    }
+    const account = await sut.add(accountData)
+    expect(account).toEqual({
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'hashed_password'
+    })
   })
 })
