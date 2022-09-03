@@ -1,5 +1,5 @@
 import { Encrypter } from '../../data/protocols/encrypter'
-import brypt from 'bcrypt'
+import bcrypt from 'bcrypt'
 
 export class BcrypAdapter implements Encrypter {
   private readonly salt: number
@@ -8,7 +8,7 @@ export class BcrypAdapter implements Encrypter {
   }
 
   async encrypt (value: string): Promise<string> {
-    await brypt.hash(value, this.salt)
-    return null
+    const hash = await bcrypt.hash(value, this.salt)
+    return hash
   }
 }
